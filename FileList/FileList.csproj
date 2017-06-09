@@ -183,8 +183,6 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Files\Create.cshtml" />
     <Content Include="Views\Files\Delete.cshtml" />
-    <Content Include="Views\Files\Details.cshtml" />
-    <Content Include="Views\Files\Edit.cshtml" />
     <Content Include="Views\Files\Index.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -193,7 +191,9 @@
       <DependentUpon>Web.config</DependentUpon>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="App_Data\Uploads\" />
+  </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>

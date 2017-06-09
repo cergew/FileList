@@ -46,49 +46,29 @@ namespace FileList.Controllers
         // сведения см. в статье https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Filename,Filesize,Timestamp")] File file)
+        public ActionResult Create(HttpPostedFileBase upload)
         {
-            if (ModelState.IsValid)
             {
-                db.Files.Add(file);
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
+                if (upload != null && upload.ContentLength > 0)
+                {
+                    //creating file on disk
+                    var fileName = System.IO.Path.GetFileName(upload.FileName);
+                    var savePath = System.IO.Path.Combine(Server.MapPath("~/App_Data/Uploads"), fileName);
+                    upload.SaveAs(savePath);
 
-            return View(file);
+                    //adding record to DB
+                    File file = db.Files.Create();
+                    file.Filename = fileName;
+                    file.Filesize = upload.ContentLength;
+                    file.Timestamp = DateTime.Now;
+                    db.Files.Add(file);
+                    db.SaveChanges();
+                }
+
+            }
+            return RedirectToAction("Index");
         }
-
-        // GET: Files/Edit/5
-        public ActionResult Edit(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            File file = db.Files.Find(id);
-            if (file == null)
-            {
-                return HttpNotFound();
-            }
-            return View(file);
-        }
-
-        // POST: Files/Edit/5
-        // Чтобы защититься от атак чрезмерной передачи данных, включите определенные свойства, для которых следует установить привязку. Дополнительные 
-        // сведения см. в статье https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,Filename,Filesize,Timestamp")] File file)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(file).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return View(file);
-        }
-
+                
         // GET: Files/Delete/5
         public ActionResult Delete(int? id)
         {
